@@ -12,12 +12,18 @@ import { startCleanupJob } from './jobs/cleanupExpiredRooms';
 const PORT = parseInt(process.env.PORT ?? '3000', 10);
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN ?? 'http://localhost:5173';
 
+const ALLOWED_ORIGINS = [
+  CLIENT_ORIGIN,
+  'http://localhost:5173',
+  /\.velaretro\.pages\.dev$/,
+];
+
 const app = express();
 
 // ── Middleware ──────────────────────────────────────────────────────────────
 app.use(
   cors({
-    origin: CLIENT_ORIGIN,
+    origin: ALLOWED_ORIGINS,
     credentials: true,
   }),
 );
@@ -38,7 +44,7 @@ const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: CLIENT_ORIGIN,
+    origin: ALLOWED_ORIGINS,
     credentials: true,
   },
 });
