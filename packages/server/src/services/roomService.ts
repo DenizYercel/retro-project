@@ -12,6 +12,7 @@ const VALID_TRANSITIONS: Record<RoomPhase, RoomPhase | null> = {
 export async function createRoom(
   name: string,
   moderatorToken: string,
+  template = 'daki',
 ): Promise<{
   id: string;
   name: string;
@@ -28,7 +29,7 @@ export async function createRoom(
     data: { name, moderatorToken, expiresAt },
   });
 
-  await createDefaultColumns(room.id);
+  await createDefaultColumns(room.id, template);
 
   return room;
 }

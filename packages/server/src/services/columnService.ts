@@ -9,16 +9,41 @@ export interface ColumnData {
   isDefault: boolean;
 }
 
-const DAKI_DEFAULTS = [
-  { name: 'Keep',    color: '#0f766e', order: 0 },
-  { name: 'Drop',    color: '#be123c', order: 1 },
-  { name: 'Add',     color: '#1d4ed8', order: 2 },
-  { name: 'Improve', color: '#b45309', order: 3 },
-];
+type ColumnDef = { name: string; color: string; order: number };
 
-export async function createDefaultColumns(roomId: string): Promise<void> {
+export const TEMPLATES: Record<string, ColumnDef[]> = {
+  daki: [
+    { name: 'Keep',    color: '#0f766e', order: 0 },
+    { name: 'Drop',    color: '#be123c', order: 1 },
+    { name: 'Add',     color: '#1d4ed8', order: 2 },
+    { name: 'Improve', color: '#b45309', order: 3 },
+  ],
+  start_stop_continue: [
+    { name: 'Start',    color: '#1d4ed8', order: 0 },
+    { name: 'Stop',     color: '#be123c', order: 1 },
+    { name: 'Continue', color: '#0f766e', order: 2 },
+  ],
+  mad_sad_glad: [
+    { name: 'Mad',  color: '#be123c', order: 0 },
+    { name: 'Sad',  color: '#b45309', order: 1 },
+    { name: 'Glad', color: '#0f766e', order: 2 },
+  ],
+  four_ls: [
+    { name: 'Liked',      color: '#0f766e', order: 0 },
+    { name: 'Learned',    color: '#1d4ed8', order: 1 },
+    { name: 'Lacked',     color: '#be123c', order: 2 },
+    { name: 'Longed For', color: '#b45309', order: 3 },
+  ],
+  www_ebi: [
+    { name: 'What Went Well', color: '#0f766e', order: 0 },
+    { name: 'Even Better If', color: '#1d4ed8', order: 1 },
+  ],
+};
+
+export async function createDefaultColumns(roomId: string, template = 'daki'): Promise<void> {
+  const columns = TEMPLATES[template] ?? TEMPLATES.daki;
   await prisma.column.createMany({
-    data: DAKI_DEFAULTS.map((d) => ({ ...d, roomId, isDefault: true })),
+    data: columns.map((d) => ({ ...d, roomId, isDefault: true })),
   });
 }
 

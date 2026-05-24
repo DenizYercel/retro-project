@@ -10,10 +10,11 @@ const router = Router();
 
 // POST / — create room
 router.post('/', async (req: Request, res: Response): Promise<void> => {
-  const { name, moderatorToken, moderatorName } = req.body as {
+  const { name, moderatorToken, moderatorName, template } = req.body as {
     name?: string;
     moderatorToken?: string;
     moderatorName?: string;
+    template?: string;
   };
 
   if (!name || !moderatorToken || !moderatorName) {
@@ -24,7 +25,7 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
   }
 
   try {
-    const room = await createRoom(name, moderatorToken);
+    const room = await createRoom(name, moderatorToken, template ?? 'daki');
 
     // Upsert moderator as participant
     await prisma.participant.upsert({

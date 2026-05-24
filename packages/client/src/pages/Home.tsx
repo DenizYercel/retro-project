@@ -1,4 +1,42 @@
 import { useState, FormEvent } from 'react'
+
+const TEMPLATES = [
+  {
+    id: 'daki',
+    name: 'DAKI',
+    desc: 'Drop, Add, Keep, Improve',
+    columns: ['Keep', 'Drop', 'Add', 'Improve'],
+    colors: ['#0f766e', '#be123c', '#1d4ed8', '#b45309'],
+  },
+  {
+    id: 'start_stop_continue',
+    name: 'Start / Stop / Continue',
+    desc: 'Klasik retrospektif formatı',
+    columns: ['Start', 'Stop', 'Continue'],
+    colors: ['#1d4ed8', '#be123c', '#0f766e'],
+  },
+  {
+    id: 'mad_sad_glad',
+    name: 'Mad / Sad / Glad',
+    desc: 'Duygusal retrospektif',
+    columns: ['Mad', 'Sad', 'Glad'],
+    colors: ['#be123c', '#b45309', '#0f766e'],
+  },
+  {
+    id: 'four_ls',
+    name: '4Ls',
+    desc: 'Liked, Learned, Lacked, Longed For',
+    columns: ['Liked', 'Learned', 'Lacked', 'Longed For'],
+    colors: ['#0f766e', '#1d4ed8', '#be123c', '#b45309'],
+  },
+  {
+    id: 'www_ebi',
+    name: 'WWW / EBI',
+    desc: 'What Went Well & Even Better If',
+    columns: ['What Went Well', 'Even Better If'],
+    colors: ['#0f766e', '#1d4ed8'],
+  },
+]
 import { useNavigate } from 'react-router-dom'
 import api from '../lib/api'
 import { useSession, markRoomJoined } from '../hooks/useSession'
@@ -12,6 +50,7 @@ export default function Home() {
 
   const [roomName, setRoomName] = useState('')
   const [moderatorName, setModeratorName] = useState(displayName)
+  const [selectedTemplate, setSelectedTemplate] = useState('daki')
   const [joinInput, setJoinInput] = useState('')
   const [creating, setCreating] = useState(false)
   const [createError, setCreateError] = useState('')
@@ -39,6 +78,7 @@ export default function Home() {
         name: roomName.trim(),
         moderatorToken: token,
         moderatorName: name,
+        template: selectedTemplate,
       })
 
       // Moderatörü otomatik katılmış say — JoinRoom'u atla
@@ -132,6 +172,40 @@ export default function Home() {
             </div>
 
             <form onSubmit={handleCreate} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Şablon
+                </label>
+                <div className="grid grid-cols-1 gap-2">
+                  {TEMPLATES.map((t) => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => setSelectedTemplate(t.id)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border text-left transition-all ${
+                        selectedTemplate === t.id
+                          ? 'border-slate-900 bg-slate-50 ring-1 ring-slate-900'
+                          : 'border-slate-200 hover:border-slate-300 bg-white'
+                      }`}
+                    >
+                      <div className="flex gap-1 flex-shrink-0">
+                        {t.colors.map((c, i) => (
+                          <span key={i} className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: c }} />
+                        ))}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-slate-900 truncate">{t.name}</p>
+                        <p className="text-xs text-slate-500 truncate">{t.desc}</p>
+                      </div>
+                      {selectedTemplate === t.id && (
+                        <svg className="w-4 h-4 text-slate-900 ml-auto flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div>
                 <label htmlFor="moderator-name" className="block text-sm font-medium text-slate-700 mb-1">
                   Adınız
