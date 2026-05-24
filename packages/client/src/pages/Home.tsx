@@ -7,11 +7,11 @@ import socket from '../lib/socket'
 
 export default function Home() {
   const navigate = useNavigate()
-  const { token, displayName, setDisplayName } = useSession()
+  const { token, setDisplayName } = useSession()
   const store = useRoomStore()
 
   const [roomName, setRoomName] = useState('')
-  const [moderatorName, setModeratorName] = useState(displayName)
+  const [moderatorName, setModeratorName] = useState('')
   const [joinInput, setJoinInput] = useState('')
   const [creating, setCreating] = useState(false)
   const [createError, setCreateError] = useState('')
