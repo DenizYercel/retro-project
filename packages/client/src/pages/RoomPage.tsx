@@ -9,7 +9,7 @@ import JoinRoom from '../components/Room/JoinRoom'
 import RoomHeader from '../components/Room/RoomHeader'
 import ModeratorPanel from '../components/Room/ModeratorPanel'
 import Board from '../components/Board/Board'
-import ActionList from '../components/Actions/ActionList'
+import RetroSummary from '../components/Room/RetroSummary'
 import api from '../lib/api'
 
 function Reconnecting() {
@@ -102,23 +102,7 @@ export default function RoomPage() {
 
       <main className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto">
-          <Board />
-
-          {room?.phase === 'DONE' && (
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 bg-primary-50 border-b border-primary-100">
-                  <h2 className="text-lg font-bold text-primary-900">Aksiyon Maddeleri</h2>
-                  <p className="text-sm text-primary-600 mt-0.5">
-                    Retro sonucunda belirlenen aksiyonlar
-                  </p>
-                </div>
-                <div className="p-6">
-                  <ActionList />
-                </div>
-              </div>
-            </div>
-          )}
+          {room?.phase === 'DONE' ? <RetroSummary /> : <Board />}
         </div>
       </main>
 
