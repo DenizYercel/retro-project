@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum RoomPhase {
+  WRITING
+  REVEALED
+  VOTING
+  DONE
+}
+
+model Room {
+  id             String      @id @default(uuid())
+  name           String
+  phase          RoomPhase   @default(WRITING)
+  moderatorToken String
+  expiresAt      DateTime
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  participants   Participant[]
+  cards          Card[]
+  columns        Column[]
+  actionItems    ActionItem[]
+
+  @@index([expiresAt])
+}
+
+model Column {
+  id        String   @id @default(uuid())
+  roomId    String
+  name      String
+  color     String   @default("#6366f1")
+  order     Int      @default(0)
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  room  Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  cards Card[]
+
+  @@index([roomId])
+}
+
+model Participant {
+  id          String    @id @default(uuid())
+  roomId      String
+  token       String
+  displayName String
+  joinedAt    DateTime  @default(now())
+
+  room        Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  votes       Vote[]
+
+  @@unique([roomId, token])
+  @@index([roomId])
+}
+
+model Card {
+  id          String   @id @default(uuid())
+  roomId      String
+  columnId    String
+  content     String
+  authorToken String
+  createdAt   DateTime @default(now())
+
+  room        Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  column      Column   @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  votes       Vote[]
+
+  @@index([roomId])
+  @@index([columnId])
+}
+
+model Vote {
+  id            String      @id @default(uuid())
+  cardId        String
+  participantId String
+  createdAt     DateTime    @default(now())
+
+  card          Card        @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  @@index([cardId])
+  @@index([participantId])
+}
+
+model ActionItem {
+  id        String   @id @default(uuid())
+  roomId    String
+  content   String
+  assignee  String?
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
+}

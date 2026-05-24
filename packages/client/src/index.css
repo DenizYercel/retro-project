@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+
+  html { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+
+  body { @apply text-slate-900 bg-slate-50; }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-sm
+           transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1
+           disabled:opacity-40 disabled:cursor-not-allowed gap-1.5;
+  }
+
+  .btn-primary {
+    @apply btn bg-slate-900 text-white hover:bg-slate-700
+           focus:ring-slate-900 active:bg-slate-800;
+  }
+
+  .btn-secondary {
+    @apply btn bg-white text-slate-700 border border-slate-200
+           hover:bg-slate-50 focus:ring-slate-300 active:bg-slate-100;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-600 text-white hover:bg-red-700
+           focus:ring-red-500;
+  }
+
+  .btn-ghost {
+    @apply btn text-slate-500 hover:bg-slate-100 hover:text-slate-700 focus:ring-slate-200;
+  }
+
+  .input {
+    @apply w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white
+           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
+           placeholder-slate-400 transition-colors duration-150;
+  }
+
+  .card {
+    @apply bg-white rounded-xl border border-slate-200 shadow-sm;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.slate.200') transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar { width: 5px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: theme('colors.slate.200');
+    border-radius: 9999px;
+  }
+}
