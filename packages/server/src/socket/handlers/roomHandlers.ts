@@ -59,18 +59,20 @@ export function registerRoomHandlers(io: Server, socket: Socket): void {
         await socket.join(`room:${roomId}`);
 
         // Build full room state for this specific token
-        const [participants, cards, actionItems, columns] = await Promise.all([
+        const [participants, actionItems, columns] = await Promise.all([
           prisma.participant.findMany({
             where: { roomId },
             select: { id: true, displayName: true, joinedAt: true, token: true },
           }),
-          getCardsForRoom(roomId, room.phase as RoomPhase, token),
           prisma.actionItem.findMany({
             where: { roomId },
             orderBy: { createdAt: 'asc' },
           }),
           getColumnsForRoom(roomId),
         ]);
+
+        const participant = participants.find((p) => p.token === token);
+        const cards = await getCardsForRoom(roomId, room.phase as RoomPhase, token, participant?.id);
 
         const safeParticipants = participants.map((p) => ({
           id: p.id,

@@ -46,8 +46,12 @@ export interface PhaseChangedPayload {
 
 export interface VoteUpdatedPayload {
   cardId: string
-  myVotes: number
   voteCount: number
+}
+
+export interface MyVotesUpdatedPayload {
+  cardId: string
+  myVotes: number
   remainingVotes: number
 }
 

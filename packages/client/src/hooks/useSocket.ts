@@ -9,6 +9,7 @@ import type {
   BoardColumn,
   PhaseChangedPayload,
   VoteUpdatedPayload,
+  MyVotesUpdatedPayload,
   TimerTickPayload,
 } from '../types'
 
@@ -79,20 +80,24 @@ export function useSocket() {
     }
 
     function onPhaseChanged(payload: PhaseChangedPayload) {
-      getStore().setPhase(payload.phase, payload.cards)
+      const existing = getStore().cards
+      const merged = payload.cards?.map((c) => {
+        const prev = existing.find((e) => e.id === c.id)
+        return { ...c, myVotes: prev?.myVotes ?? 0 }
+      })
+      getStore().setPhase(payload.phase, merged)
     }
 
     function onVoteUpdated(payload: VoteUpdatedPayload) {
-      getStore().castVote(
-        payload.cardId,
-        payload.myVotes,
-        payload.voteCount,
-        payload.remainingVotes
-      )
+      getStore().updateVoteCount(payload.cardId, payload.voteCount)
+    }
+
+    function onMyVotesUpdated(payload: MyVotesUpdatedPayload) {
+      getStore().updateMyVotes(payload.cardId, payload.myVotes, payload.remainingVotes)
     }
 
     function onTimerTick(payload: TimerTickPayload) {
-      getStore().tickTimer(payload.remaining)
+      getStore().setTimer({ active: true, remaining: payload.remaining })
     }
 
     function onTimerEnded() {
@@ -124,6 +129,7 @@ export function useSocket() {
     socket.on('card_deleted', onCardDeleted)
     socket.on('phase_changed', onPhaseChanged)
     socket.on('vote_updated', onVoteUpdated)
+    socket.on('my_votes_updated', onMyVotesUpdated)
     socket.on('timer_tick', onTimerTick)
     socket.on('timer_ended', onTimerEnded)
     socket.on('action_added', onActionAdded)
@@ -140,6 +146,7 @@ export function useSocket() {
       socket.off('card_deleted', onCardDeleted)
       socket.off('phase_changed', onPhaseChanged)
       socket.off('vote_updated', onVoteUpdated)
+    socket.off('my_votes_updated', onMyVotesUpdated)
       socket.off('timer_tick', onTimerTick)
       socket.off('timer_ended', onTimerEnded)
       socket.off('action_added', onActionAdded)

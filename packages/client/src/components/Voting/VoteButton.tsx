@@ -15,8 +15,9 @@ export default function VoteButton({ cardId, myVotes, isOwn, remainingVotes, roo
   const { castVote, retractVote } = useRoom()
   const myToken = useRoomStore((s) => s.myToken)
 
-  const canAdd = !isOwn && remainingVotes > 0 && myVotes < MAX_VOTES_PER_CARD
-  const canRetract = myVotes > 0
+  const safeMyVotes = myVotes ?? 0
+  const canAdd = !isOwn && remainingVotes > 0 && safeMyVotes < MAX_VOTES_PER_CARD
+  const canRetract = safeMyVotes > 0
 
   function handleAdd() {
     if (!canAdd) return
@@ -53,7 +54,7 @@ export default function VoteButton({ cardId, myVotes, isOwn, remainingVotes, roo
           <div
             key={i}
             className={`w-2 h-2 rounded-full transition-colors ${
-              i < myVotes ? 'bg-red-400' : 'bg-gray-200'
+              i < safeMyVotes ? 'bg-red-400' : 'bg-gray-200'
             }`}
           />
         ))}

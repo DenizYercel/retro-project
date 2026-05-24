@@ -44,6 +44,8 @@ interface RoomStore {
   // Voting
   castVote: (cardId: string, myVotes: number, voteCount: number, remainingVotes: number) => void
   retractVote: (cardId: string, myVotes: number, voteCount: number, remainingVotes: number) => void
+  updateVoteCount: (cardId: string, voteCount: number) => void
+  updateMyVotes: (cardId: string, myVotes: number, remainingVotes: number) => void
 
   // Action items
   addActionItem: (item: ActionItem) => void
@@ -131,6 +133,21 @@ export const useRoomStore = create<RoomStore>((set) => ({
       remainingVotes,
       cards: state.cards.map((c) =>
         c.id === cardId ? { ...c, myVotes, voteCount } : c
+      ),
+    })),
+
+  updateVoteCount: (cardId, voteCount) =>
+    set((state) => ({
+      cards: state.cards.map((c) =>
+        c.id === cardId ? { ...c, voteCount } : c
+      ),
+    })),
+
+  updateMyVotes: (cardId, myVotes, remainingVotes) =>
+    set((state) => ({
+      remainingVotes,
+      cards: state.cards.map((c) =>
+        c.id === cardId ? { ...c, myVotes } : c
       ),
     })),
 
